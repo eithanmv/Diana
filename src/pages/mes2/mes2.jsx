@@ -697,11 +697,11 @@ function EmergencySupport({ mode, fireHearts }) {
   const [msg, setMsg] = useState({ text: "", icon: null });
 
   const frases = [
-    { text: "Aunque no este contigo siempre estare en tu corazon", icon: "❤️" },
-    { text: "Si te sientes mal yo estare para ti siempre", icon: "🫂" },
-    { text: "Eres la mujer más fuerte que conozco asi que tu puedes", icon: "💪" },
+    { text: "Aunque no esté contigo, siempre estaré en tu corazón", icon: "❤️" },
+    { text: "Si te sientes mal, yo estaré para ti siempre", icon: "🫂" },
+    { text: "Eres la mujer más fuerte que conozco, tú puedes con todo", icon: "💪" },
     { text: "Eres mi princesa y nunca te voy a dejar sola", icon: "👑" },
-    { text: "Eres la persona que mas amo en este planeta", icon: "🌎" }
+    { text: "Eres la persona que más amo en este planeta", icon: "🌎" }
   ];
 
   const handleOpen = () => { 
@@ -718,17 +718,100 @@ function EmergencySupport({ mode, fireHearts }) {
   return (
     <>
       <Zoom in={true}>
-        <Fab color="primary" onClick={handleOpen} sx={{ position: 'fixed', bottom: 25, right: 25, zIndex: 2000, borderRadius: "16px", border: 'none' }}>
+        <Fab 
+          onClick={handleOpen} 
+          sx={{ 
+            position: 'fixed', bottom: 25, right: 25, zIndex: 2000, 
+            borderRadius: 0, // <--- TOTALMENTE CUADRADO
+            bgcolor: '#ff69b4', 
+            color: 'white',
+            boxShadow: '0 0 20px rgba(255,105,180,0.5)',
+            border: '2px solid #fff',
+            '&:hover': { bgcolor: '#ff4081', transform: 'scale(1.1)' }
+          }}
+        >
           <MedicalServicesRoundedIcon />
         </Fab>
       </Zoom>
-      <Dialog open={open} onClose={() => setOpen(false)} PaperProps={{ sx: { borderRadius: 4, p: 1, textAlign: 'center', background: mode === 'dark' ? 'rgba(30, 30, 45, 0.98)' : '#fff', border: '2px solid #ff69b4', maxWidth: '350px' } }}>
-        <Box sx={{ p: 3 }}>
-          <Typography variant="h2" sx={{ mb: 1 }}>{msg.icon}</Typography>
-          <Typography variant="h6" sx={{ fontWeight: 900, mb: 1, color: 'primary.main' }}>RECUERDA QUE</Typography>
-          <Typography variant="body1" sx={{ fontSize: '1.1rem', fontStyle: 'italic', mb: 3 }}>"{msg.text}"</Typography>
-          <Button fullWidth variant="contained" startIcon={<FavoriteRoundedIcon />} onClick={handleReceiveHug} sx={{ borderRadius: 3, py: 1.5, fontWeight: 800, textTransform: 'none' }}>Te amo ❤️</Button>
+
+      <Dialog 
+        open={open} 
+        onClose={() => setOpen(false)} 
+        TransitionComponent={Zoom}
+        PaperProps={{ 
+          sx: { 
+            borderRadius: 0, // <--- CERO REDONDEZ
+            p: 0, 
+            textAlign: 'center', 
+            background: mode === 'dark' ? '#0a0a0a' : '#fff', 
+            border: '3px solid #ff69b4', 
+            maxWidth: '380px',
+            overflow: 'hidden'
+          } 
+        }}
+      >
+        {/* Encabezado de Emergencia Industrial */}
+        <Box sx={{ bgcolor: '#ff69b4', py: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 1 }}>
+          <FavoriteRoundedIcon sx={{ fontSize: 16, color: '#fff' }} />
+          <Typography sx={{ fontWeight: 900, color: '#fff', fontSize: '0.7rem', letterSpacing: 2 }}>
+            CUANDO TE SIENTAS MAL
+          </Typography>
+          <FavoriteRoundedIcon sx={{ fontSize: 16, color: '#fff' }} />
         </Box>
+
+        <Box sx={{ p: 4, position: 'relative' }}>
+          {/* Marca de agua de fondo */}
+          <Typography sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: '8rem', opacity: 0.05, zIndex: 0 }}>
+            {msg.icon}
+          </Typography>
+
+          <Box sx={{ position: 'relative', zIndex: 1 }}>
+            <Typography variant="h1" sx={{ mb: 2, filter: 'drop-shadow(0 0 10px rgba(255,105,180,0.5))' }}>
+              {msg.icon}
+            </Typography>
+
+            <Typography variant="caption" sx={{ color: '#ff69b4', fontWeight: 900, letterSpacing: 2, display: 'block', mb: 1 }}>
+              RECUERDA QUE:
+            </Typography>
+
+            <Typography variant="h6" sx={{ 
+              fontWeight: 800, 
+              mb: 4, 
+              lineHeight: 1.4,
+              fontStyle: 'italic',
+              color: mode === 'dark' ? '#fff' : '#000'
+            }}>
+              "{msg.text}"
+            </Typography>
+
+            <Button 
+              fullWidth 
+              variant="contained" 
+              onClick={handleReceiveHug} 
+              sx={{ 
+                borderRadius: 0, // <--- CUADRADO
+                py: 2, 
+                fontWeight: 900, 
+                bgcolor: '#ff69b4',
+                fontSize: '1rem',
+                letterSpacing: 1,
+                '&:hover': { bgcolor: '#ff4081', boxShadow: '0 0 20px rgba(255,64,129,0.5)' }
+              }}
+            >
+              TE AMO MUCHO
+            </Button>
+            
+            <Typography 
+              onClick={() => setOpen(false)}
+              sx={{ mt: 2, fontSize: '0.7rem', opacity: 0.5, cursor: 'pointer', fontWeight: 700, '&:hover': { opacity: 1 } }}
+            >
+              CERRAR
+            </Typography>
+          </Box>
+        </Box>
+
+        {/* Detalle de diseño: Línea de carga decorativa */}
+        <LinearProgress variant="determinate" value={100} sx={{ height: 4, bgcolor: 'transparent', '& .MuiLinearProgress-bar': { bgcolor: '#ff4081' } }} />
       </Dialog>
     </>
   );
