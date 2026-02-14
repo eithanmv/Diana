@@ -259,7 +259,7 @@ function Home({ mode, toggleMode }) {
                     background: "linear-gradient(90deg, #ff4081, #ff80ab)",
                     WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"
                   }}>
-                    AMOR, TENGO UNA PEQUEÑA PREGUNTA...
+                    AMOR, TENGO UNA PREGUNTA...
                   </Typography>
                   <Typography variant="caption" sx={{ color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.5)", fontWeight: 700 }}>
                     Click aquí para abrir algo especial
