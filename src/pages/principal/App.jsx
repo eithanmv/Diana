@@ -2,12 +2,12 @@ import { useState, useEffect, useMemo, memo } from "react";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import { 
   Box, Typography, Container, Stack, Paper, Grid, Divider, 
-  ThemeProvider, createTheme, CssBaseline, IconButton 
+  ThemeProvider, createTheme, CssBaseline, IconButton, Button 
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { 
   Favorite, AutoAwesome, Stars, AccessTime, ChevronRightRounded,
-  DarkModeRounded, LightModeRounded 
+  DarkModeRounded, LightModeRounded
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -16,10 +16,10 @@ dayjs.extend(duration);
 
 import Mes1 from "../mes1/mes1";
 import Mes2 from "../mes2/mes2";
+import SanValentin from "../sanvalentin/sanvalentin"; 
 
 const FECHA_INICIO = "2025-11-30";
 
-// --- COMPONENTES MEMOIZADOS (Animaciones) ---
 const HeartsAnimation = memo(() => (
   <>
     {[...Array(35)].map((_, i) => (
@@ -64,7 +64,6 @@ const GlobalBackground = ({ mode }) => (
   </Box>
 );
 
-// --- COMPONENTES DE UI ---
 const CounterItem = ({ value, label, mode }) => (
   <Box sx={{ textAlign: "center", flex: 1 }}>
     <Typography variant="h3" sx={{ 
@@ -190,20 +189,99 @@ function Home({ mode, toggleMode }) {
             </Grid>
           ))}
         </Grid>
+
+        {/* --- BOTÓN HOLOGRÁFICO PREMIUM --- */}
+        <Box sx={{ mt: 8, position: 'relative', px: 1 }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 1, duration: 0.8 }}
+          >
+            <Button
+              onClick={() => nav("/san-valentin")}
+              fullWidth
+              sx={{
+                height: '100px',
+                borderRadius: '24px',
+                position: 'relative',
+                background: mode === "dark" 
+                  ? "rgba(255, 64, 129, 0.03)" 
+                  : "rgba(255, 255, 255, 0.4)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 64, 129, 0.3)",
+                color: "#ff4081",
+                textTransform: 'none',
+                overflow: 'hidden',
+                display: 'flex',
+                justifyContent: 'center',
+                px: 4,
+                boxShadow: mode === "dark" ? "0 10px 40px rgba(0,0,0,0.5)" : "0 10px 30px rgba(255, 64, 129, 0.1)",
+                "&:hover": {
+                  background: mode === "dark" ? "rgba(255, 64, 129, 0.08)" : "rgba(255, 255, 255, 0.6)",
+                  borderColor: "#ff4081",
+                },
+                "&::after": {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0, left: 0, right: 0, bottom: 0,
+                  borderRadius: '24px',
+                  padding: '2px',
+                  background: 'linear-gradient(90deg, transparent, #ff4081, transparent)',
+                  WebkitMask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+                  WebkitMaskComposite: 'destination-out',
+                  maskComposite: 'exclude',
+                  animation: 'shimmer 3s infinite linear',
+                },
+                "@keyframes shimmer": {
+                  '0%': { transform: 'translateX(-100%)' },
+                  '100%': { transform: 'translateX(100%)' }
+                }
+              }}
+            >
+              <Stack direction="row" spacing={3} alignItems="center">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                >
+                  <Box sx={{ 
+                    width: 50, height: 50, borderRadius: '50%', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    bgcolor: 'rgba(255, 64, 129, 0.1)',
+                    border: '1px solid rgba(255, 64, 129, 0.2)'
+                  }}>
+                    <Favorite sx={{ fontSize: 28, filter: 'drop-shadow(0 0 8px #ff4081)' }} />
+                  </Box>
+                </motion.div>
+                
+                <Box sx={{ textAlign: 'center' }}>
+                  <Typography sx={{ 
+                    fontWeight: 900, fontSize: "1.2rem", letterSpacing: 1,
+                    background: "linear-gradient(90deg, #ff4081, #ff80ab)",
+                    WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent"
+                  }}>
+                    AMOR, TENGO UNA PEQUEÑA PREGUNTA...
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.5)", fontWeight: 700 }}>
+                    Click aquí para abrir algo especial
+                  </Typography>
+                </Box>
+              </Stack>
+            </Button>
+          </motion.div>
+        </Box>
+        {/* ------------------------------------------- */}
+
       </Box>
     </Container>
   );
 }
 
-// --- COMPONENTE EXPORTADO CON PERSISTENCIA ---
 export default function App() {
-  // 1. Inicializamos leyendo el localStorage
   const [mode, setMode] = useState(() => {
     const savedMode = localStorage.getItem("userTheme");
-    return savedMode || "dark"; // Por defecto "dark", pero si hay algo guardado lo usa
+    return savedMode || "dark";
   });
 
-  // 2. Guardamos en localStorage cada vez que el modo cambie
   useEffect(() => {
     localStorage.setItem("userTheme", mode);
   }, [mode]);
@@ -224,6 +302,7 @@ export default function App() {
           <Route path="/" element={<Home mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes1" element={<Mes1 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes2" element={<Mes2 mode={mode} toggleMode={toggleMode} />} />
+          <Route path="/san-valentin" element={<SanValentin mode={mode} />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
