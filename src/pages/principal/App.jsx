@@ -23,7 +23,8 @@ import {
   ChevronRightRounded,
   DarkModeRounded,
   LightModeRounded,
-  LockClock
+  LockClock,
+  CakeRounded
 } from "@mui/icons-material";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
@@ -36,9 +37,7 @@ import Mes2 from "../mes2/mes2";
 import Mes3 from "../mes3/mes3";
 import Mes4 from "../mes4/mes4";
 import SanValentin from "../sanvalentin/sanvalentin";
-
-// Si luego haces mes5, solo descomenta esta línea:
-// import Mes5 from "../mes5/mes5";
+import Cumple from "../cumple/Cumple";
 
 const FECHA_INICIO = "2025-11-30";
 
@@ -49,6 +48,7 @@ const HeartsAnimation = memo(({ pageTheme }) => {
     mes3: ["rgba(124, 77, 255, 0.5)", "rgba(0, 229, 255, 0.5)"],
     mes4: ["rgba(255, 215, 64, 0.45)", "rgba(255, 193, 7, 0.45)"],
     mes5: ["rgba(76, 175, 80, 0.45)", "rgba(129, 199, 132, 0.45)"],
+    cumple: ["rgba(255, 95, 162, 0.45)", "rgba(56, 189, 248, 0.45)"],
   };
 
   const colors = heartColors[pageTheme] || heartColors.default;
@@ -93,6 +93,7 @@ const GlobalBackground = ({ mode }) => {
     "/mes3": "mes3",
     "/mes4": "mes4",
     "/mes5": "mes5",
+    "/cumple": "cumple",
     "/san-valentin": "default",
   };
 
@@ -104,12 +105,14 @@ const GlobalBackground = ({ mode }) => {
       mes3: "radial-gradient(circle at 50% 50%, #0a051a 0%, #050505 100%)",
       mes4: "radial-gradient(circle at 50% 50%, #2b2100 0%, #050505 100%)",
       mes5: "radial-gradient(circle at 50% 50%, #071a0d 0%, #050505 100%)",
+      cumple: "radial-gradient(circle at 50% 50%, #12071e 0%, #050505 100%)",
     },
     light: {
       default: "radial-gradient(circle at 50% 50%, #fff0f5 0%, #ffd1dc 100%)",
       mes3: "radial-gradient(circle at 50% 50%, #f0ebff 0%, #d1c4e9 100%)",
       mes4: "radial-gradient(circle at 50% 50%, #fffdf3 0%, #f7efc8 100%)",
       mes5: "radial-gradient(circle at 50% 50%, #edfbe9 0%, #b9e4c9 100%)",
+      cumple: "radial-gradient(circle at 50% 50%, #fff5fb 0%, #e9dcff 100%)",
     }
   };
 
@@ -163,7 +166,7 @@ const CounterItem = ({ value, label, mode }) => (
 function Home({ mode, toggleMode }) {
   const nav = useNavigate();
   const [timeLeft, setTimeLeft] = useState({});
-  const isSanValentinLocked = true;
+  const isBirthdayLocked = false;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -312,7 +315,6 @@ function Home({ mode, toggleMode }) {
               icon: <AutoAwesome />,
               color: "linear-gradient(135deg, #f4b400 0%, #ffd54f 100%)"
             },
-            
           ].map((item, idx) => (
             <Grid item xs={12} key={idx}>
               <Paper
@@ -368,7 +370,7 @@ function Home({ mode, toggleMode }) {
         <Box sx={{ mt: 8, position: "relative", px: 1 }}>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1, duration: 0.8 }}>
             <Button
-              onClick={() => !isSanValentinLocked && nav("/san-valentin")}
+              onClick={() => nav("/cumple")}
               fullWidth
               sx={{
                 height: "100px",
@@ -383,7 +385,7 @@ function Home({ mode, toggleMode }) {
                 display: "flex",
                 justifyContent: "center",
                 px: 4,
-                cursor: isSanValentinLocked ? "not-allowed" : "pointer",
+                cursor: "pointer",
                 "&::after": {
                   content: '""',
                   position: "absolute",
@@ -419,13 +421,10 @@ function Home({ mode, toggleMode }) {
                       border: "1px solid rgba(255, 64, 129, 0.2)"
                     }}
                   >
-                    {isSanValentinLocked ? (
-                      <LockClock sx={{ fontSize: 28 }} />
-                    ) : (
-                      <Favorite sx={{ fontSize: 28, filter: "drop-shadow(0 0 8px #ff4081)" }} />
-                    )}
+                    <CakeRounded sx={{ fontSize: 28, filter: "drop-shadow(0 0 8px #ff4081)" }} />
                   </Box>
                 </motion.div>
+
                 <Box sx={{ textAlign: "center" }}>
                   <Typography
                     sx={{
@@ -437,7 +436,7 @@ function Home({ mode, toggleMode }) {
                       WebkitTextFillColor: "transparent"
                     }}
                   >
-                    {isSanValentinLocked ? "SISTEMA BLOQUEADO" : "AMOR, TENGO UNA PREGUNTA..."}
+                    FELIZ CUMPLEAÑOS, MI AMOR
                   </Typography>
                   <Typography
                     variant="caption"
@@ -446,7 +445,7 @@ function Home({ mode, toggleMode }) {
                       fontWeight: 700
                     }}
                   >
-                    {isSanValentinLocked ? "Disponible en momentos especiales" : "Click aquí para abrir algo especial"}
+                    Click aquí para abrir tu sorpresa
                   </Typography>
                 </Box>
               </Stack>
@@ -488,12 +487,7 @@ export default function App() {
           <Route path="/mes3" element={<Mes3 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes4" element={<Mes4 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/san-valentin" element={<SanValentin mode={mode} />} />
-
-          {/*
-          Cuando tengas Mes5, agrega estas dos líneas:
-          import Mes5 from "../mes5/mes5";
-          <Route path="/mes5" element={<Mes5 mode={mode} toggleMode={toggleMode} />} />
-          */}
+          <Route path="/cumple" element={<Cumple mode={mode} toggleMode={toggleMode} />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
