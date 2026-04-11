@@ -13,7 +13,7 @@ import {
     Paper
 } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
-import foto from "../../assets/Amorcito.JPEG";
+import foto from "../../assets/Amorcito.jpeg";
 import {
     ArrowBackIosNewRounded,
     DarkModeRounded,
