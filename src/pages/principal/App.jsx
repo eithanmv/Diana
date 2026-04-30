@@ -36,6 +36,7 @@ import Mes1 from "../mes1/mes1";
 import Mes2 from "../mes2/mes2";
 import Mes3 from "../mes3/mes3";
 import Mes4 from "../mes4/mes4";
+import Mes5 from "../mes5/mes5";
 import SanValentin from "../sanvalentin/sanvalentin";
 import Cumple from "../cumple/Cumple";
 
@@ -315,6 +316,13 @@ function Home({ mode, toggleMode }) {
               icon: <AutoAwesome />,
               color: "linear-gradient(135deg, #f4b400 0%, #ffd54f 100%)"
             },
+            {
+              path: "/mes5",
+              label: "Mes Cinco",
+              desc: "Seguimos escribiendo nuestra historia",
+              icon: <Stars />,
+              color: "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)"
+            },
           ].map((item, idx) => (
             <Grid item xs={12} key={idx}>
               <Paper
@@ -486,6 +494,7 @@ export default function App() {
           <Route path="/mes2" element={<Mes2 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes3" element={<Mes3 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes4" element={<Mes4 mode={mode} toggleMode={toggleMode} />} />
+          <Route path="/mes5" element={<Mes5 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/san-valentin" element={<SanValentin mode={mode} />} />
           <Route path="/cumple" element={<Cumple mode={mode} toggleMode={toggleMode} />} />
         </Routes>
