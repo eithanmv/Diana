@@ -319,7 +319,7 @@ function Home({ mode, toggleMode }) {
             {
               path: "/mes5",
               label: "Mes Cinco",
-              desc: "Seguimos escribiendo nuestra historia",
+              desc: "Crecemos juntos ",
               icon: <Stars />,
               color: "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)"
             },
