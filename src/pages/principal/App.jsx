@@ -1,81 +1,42 @@
-import { useState, useEffect, useMemo, memo } from "react";
+import { useState, useEffect, useMemo, useRef, memo } from "react";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Container,
-  Stack,
-  Paper,
-  Grid,
-  Divider,
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
-  IconButton,
-  Button
-} from "@mui/material";
-import { motion } from "framer-motion";
-import {
-  Favorite,
-  AutoAwesome,
-  Stars,
-  AccessTime,
-  ChevronRightRounded,
-  DarkModeRounded,
-  LightModeRounded,
-  LockClock,
-  CakeRounded
-} from "@mui/icons-material";
+import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import { Favorite } from "@mui/icons-material";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
-// --- IMPORTACIONES DE COMPONENTES ---
 import Mes1 from "../mes1/mes1";
 import Mes2 from "../mes2/mes2";
 import Mes3 from "../mes3/mes3";
 import Mes4 from "../mes4/mes4";
 import Mes5 from "../mes5/mes5";
+import Mes6 from "../mes6/mes6";
 import SanValentin from "../sanvalentin/sanvalentin";
 import Cumple from "../cumple/Cumple";
 
 const FECHA_INICIO = "2025-11-30";
 
-// --- ANIMACIÓN DE FONDO ESCALABLE ---
+// ─── FONDO ORIGINAL — todas las páginas excepto Home ─────────────────────────
 const HeartsAnimation = memo(({ pageTheme }) => {
   const heartColors = {
-    default: ["rgba(255, 64, 129, 0.4)", "rgba(147, 51, 234, 0.4)"],
-    mes3: ["rgba(124, 77, 255, 0.5)", "rgba(0, 229, 255, 0.5)"],
-    mes4: ["rgba(255, 215, 64, 0.45)", "rgba(255, 193, 7, 0.45)"],
-    mes5: ["rgba(76, 175, 80, 0.45)", "rgba(129, 199, 132, 0.45)"],
-    cumple: ["rgba(255, 95, 162, 0.45)", "rgba(56, 189, 248, 0.45)"],
+    default: ["rgba(255,64,129,0.4)", "rgba(147,51,234,0.4)"],
+    mes3: ["rgba(124,77,255,0.5)", "rgba(0,229,255,0.5)"],
+    mes4: ["rgba(255,215,64,0.45)", "rgba(255,193,7,0.45)"],
+    mes5: ["rgba(76,175,80,0.45)", "rgba(129,199,132,0.45)"],
+    cumple: ["rgba(255,95,162,0.45)", "rgba(56,189,248,0.45)"],
   };
-
   const colors = heartColors[pageTheme] || heartColors.default;
-
   return (
     <>
       {[...Array(35)].map((_, i) => (
-        <motion.div
-          key={i}
+        <motion.div key={i}
           initial={{ y: "110vh", x: `${Math.random() * 100}vw`, opacity: 0 }}
-          animate={{
-            y: "-20vh",
-            opacity: [0, 0.4, 0],
-            scale: [0.5, 1.2, 0.7],
-            rotate: [0, 180, 360]
-          }}
-          transition={{
-            duration: Math.random() * 15 + 15,
-            repeat: Infinity,
-            delay: Math.random() * 25,
-            ease: "linear"
-          }}
-          style={{
-            position: "absolute",
-            color: i % 2 === 0 ? colors[0] : colors[1],
-          }}
+          animate={{ y: "-20vh", opacity: [0, 0.4, 0], scale: [0.5, 1.2, 0.7], rotate: [0, 180, 360] }}
+          transition={{ duration: Math.random() * 15 + 15, repeat: Infinity, delay: Math.random() * 25, ease: "linear" }}
+          style={{ position: "absolute", color: i % 2 === 0 ? colors[0] : colors[1] }}
         >
           <Favorite sx={{ fontSize: Math.random() * 40 + 15 }} />
         </motion.div>
@@ -86,402 +47,671 @@ const HeartsAnimation = memo(({ pageTheme }) => {
 
 const GlobalBackground = ({ mode }) => {
   const location = useLocation();
+  const isHome = location.pathname === "/";
 
   const routeThemes = {
-    "/": "default",
-    "/mes1": "default",
-    "/mes2": "default",
-    "/mes3": "mes3",
-    "/mes4": "mes4",
-    "/mes5": "mes5",
-    "/cumple": "cumple",
-    "/san-valentin": "default",
+    "/mes1": "default", "/mes2": "default", "/mes3": "mes3",
+    "/mes4": "mes4", "/mes5": "mes5", "/cumple": "cumple", "/san-valentin": "default",
   };
-
   const pageTheme = routeThemes[location.pathname] || "default";
-
-  const backgrounds = {
+  const bgs = {
     dark: {
-      default: "radial-gradient(circle at 50% 50%, #1a0510 0%, #050505 100%)",
-      mes3: "radial-gradient(circle at 50% 50%, #0a051a 0%, #050505 100%)",
-      mes4: "radial-gradient(circle at 50% 50%, #2b2100 0%, #050505 100%)",
-      mes5: "radial-gradient(circle at 50% 50%, #071a0d 0%, #050505 100%)",
-      cumple: "radial-gradient(circle at 50% 50%, #12071e 0%, #050505 100%)",
+      default: "radial-gradient(circle at 50% 50%,#1a0510 0%,#050505 100%)",
+      mes3: "radial-gradient(circle at 50% 50%,#0a051a 0%,#050505 100%)",
+      mes4: "radial-gradient(circle at 50% 50%,#2b2100 0%,#050505 100%)",
+      mes5: "radial-gradient(circle at 50% 50%,#071a0d 0%,#050505 100%)",
+      cumple: "radial-gradient(circle at 50% 50%,#12071e 0%,#050505 100%)",
     },
     light: {
-      default: "radial-gradient(circle at 50% 50%, #fff0f5 0%, #ffd1dc 100%)",
-      mes3: "radial-gradient(circle at 50% 50%, #f0ebff 0%, #d1c4e9 100%)",
-      mes4: "radial-gradient(circle at 50% 50%, #fffdf3 0%, #f7efc8 100%)",
-      mes5: "radial-gradient(circle at 50% 50%, #edfbe9 0%, #b9e4c9 100%)",
-      cumple: "radial-gradient(circle at 50% 50%, #fff5fb 0%, #e9dcff 100%)",
+      default: "radial-gradient(circle at 50% 50%,#fff0f5 0%,#ffd1dc 100%)",
+      mes3: "radial-gradient(circle at 50% 50%,#f0ebff 0%,#d1c4e9 100%)",
+      mes4: "radial-gradient(circle at 50% 50%,#fffdf3 0%,#f7efc8 100%)",
+      mes5: "radial-gradient(circle at 50% 50%,#edfbe9 0%,#b9e4c9 100%)",
+      cumple: "radial-gradient(circle at 50% 50%,#fff5fb 0%,#e9dcff 100%)",
     }
   };
 
+  if (isHome) return null; // Home maneja su propio fondo inline
+
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        zIndex: -1,
-        transition: "background 1.2s ease-in-out",
-        background: backgrounds[mode][pageTheme],
-        overflow: "hidden",
-        pointerEvents: "none"
-      }}
-    >
+    <div style={{
+      position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+      zIndex: -1, transition: "background 1.2s ease-in-out",
+      background: bgs[mode][pageTheme], overflow: "hidden", pointerEvents: "none"
+    }}>
       <HeartsAnimation pageTheme={pageTheme} />
-    </Box>
+    </div>
   );
 };
 
-const CounterItem = ({ value, label, mode }) => (
-  <Box sx={{ textAlign: "center", flex: 1 }}>
-    <Typography
-      variant="h3"
-      sx={{
-        fontWeight: 900,
-        color: mode === "dark" ? "#fff" : "#ff4081",
-        transition: "color 0.8s ease",
-        textShadow: mode === "dark" ? "0 0 15px rgba(255, 64, 129, 0.6)" : "none",
-        fontSize: { xs: "1.8rem", md: "2.5rem" }
-      }}
-    >
-      {value}
-    </Typography>
-    <Typography
-      variant="caption"
-      sx={{
-        color: mode === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)",
-        fontWeight: 700,
-        letterSpacing: 1.5
-      }}
-    >
-      {label}
-    </Typography>
-  </Box>
-);
-
-function Home({ mode, toggleMode }) {
-  const nav = useNavigate();
-  const [timeLeft, setTimeLeft] = useState({});
-  const isBirthdayLocked = false;
+// ─── CANVAS — partículas flotantes para el Home ───────────────────────────────
+const ParticleCanvas = memo(({ mode }) => {
+  const canvasRef = useRef(null);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const diff = dayjs.duration(dayjs().diff(dayjs(FECHA_INICIO)));
-      setTimeLeft({
-        meses: Math.floor(diff.asMonths()),
-        dias: diff.days(),
-        horas: diff.hours(),
-        minutos: diff.minutes(),
-        segundos: diff.seconds(),
-      });
-    }, 1000);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    let raf;
+    let W, H;
 
-    return () => clearInterval(timer);
-  }, []);
+    const isDark = mode === "dark";
+
+    const resize = () => {
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    // Partículas: mix de puntos y mini-corazones
+    const N = 55;
+    const particles = Array.from({ length: N }, (_, i) => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 2.2 + 0.6,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: -(Math.random() * 0.35 + 0.1),
+      alpha: Math.random() * 0.5 + 0.15,
+      isHeart: i % 7 === 0,
+      size: Math.random() * 7 + 5,
+      hue: isDark
+        ? Math.random() > 0.5 ? "255,64,129" : "180,80,255"
+        : Math.random() > 0.5 ? "220,30,90" : "150,60,220",
+      phase: Math.random() * Math.PI * 2,
+      speed: Math.random() * 0.008 + 0.003,
+    }));
+
+    // Dibuja corazón centrado en (0,0), tamaño s
+    const drawHeart = (ctx, s) => {
+      ctx.beginPath();
+      ctx.moveTo(0, -s * 0.3);
+      ctx.bezierCurveTo(s * 0.6, -s, s * 1.1, s * 0.1, 0, s * 0.8);
+      ctx.bezierCurveTo(-s * 1.1, s * 0.1, -s * 0.6, -s, 0, -s * 0.3);
+      ctx.closePath();
+    };
+
+    const draw = (t) => {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        p.phase += p.speed;
+        p.x += p.vx + Math.sin(p.phase) * 0.18;
+        p.y += p.vy;
+        if (p.y < -20) { p.y = H + 10; p.x = Math.random() * W; }
+        if (p.x < -20) p.x = W + 10;
+        if (p.x > W + 20) p.x = -10;
+
+        ctx.save();
+        ctx.globalAlpha = p.alpha * (0.7 + 0.3 * Math.sin(p.phase * 1.5));
+        if (p.isHeart) {
+          ctx.translate(p.x, p.y);
+          ctx.rotate(Math.sin(p.phase * 0.5) * 0.3);
+          ctx.fillStyle = `rgba(${p.hue},0.9)`;
+          drawHeart(ctx, p.size);
+          ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${p.hue},0.85)`;
+          ctx.fill();
+        }
+        ctx.restore();
+      });
+      raf = requestAnimationFrame(draw);
+    };
+
+    raf = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+    };
+  }, [mode]);
 
   return (
-    <Container maxWidth="md">
-      <Box sx={{ position: "fixed", top: 16, right: 16, zIndex: 1000 }}>
-        <IconButton
-          onClick={toggleMode}
-          sx={{
-            bgcolor: mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.8)",
-            backdropFilter: "blur(10px)",
-            border: "1px solid rgba(255,64,129,0.2)",
-            transition: "all 0.5s ease"
-          }}
-        >
-          {mode === "dark" ? (
-            <LightModeRounded sx={{ color: "#ffeb3b" }} />
-          ) : (
-            <DarkModeRounded sx={{ color: "#4527a0" }} />
-          )}
-        </IconButton>
-      </Box>
+    <canvas ref={canvasRef} style={{
+      position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+      zIndex: -1, pointerEvents: "none",
+    }} />
+  );
+});
 
-      <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column", justifyContent: "center", py: 4 }}>
-        <motion.div initial={{ opacity: 0, y: -30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-          <Typography
-            align="center"
-            sx={{
-              color: "#ff4081",
-              fontWeight: 800,
-              letterSpacing: 4,
-              mb: 1,
-              fontSize: "0.8rem"
-            }}
-          >
-            NUESTRO UNIVERSO
-          </Typography>
+// ─── ESTILOS ──────────────────────────────────────────────────────────────────
+const injectStyles = () => {
+  if (document.getElementById("lv4-styles")) return;
+  const s = document.createElement("style");
+  s.id = "lv4-styles";
+  s.innerHTML = `
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap');
 
-          <Typography
-            variant="h1"
-            align="center"
-            sx={{
-              fontSize: { xs: "3.5rem", md: "6rem" },
-              fontWeight: 950,
-              lineHeight: 1,
-              mb: 4,
-              transition: "all 0.8s ease",
-              background:
-                mode === "dark"
-                  ? "linear-gradient(180deg, #fff 30%, #ff80ab 100%)"
-                  : "linear-gradient(180deg, #ff4081 30%, #c2185b 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              filter: mode === "dark" ? "drop-shadow(0 0 20px rgba(255,64,129,0.3))" : "none"
-            }}
-          >
-            Te Amo <br /> Diana
-          </Typography>
+    .lv4 {
+      min-height:100vh;
+      font-family:'Space Grotesk',sans-serif;
+      padding-bottom:4rem;
+    }
+    .lv4 * { box-sizing:border-box; }
+
+    /* ── variables de color ── */
+    .lv4.dark {
+      --c:#fff;
+      --cm:rgba(255,255,255,0.42);
+      --cs:rgba(255,255,255,0.1);
+      --bg:rgba(255,255,255,0.04);
+      --brd:rgba(255,255,255,0.09);
+      --pink:#ff4081;
+      --pink2:#ff80ab;
+      --bg-base:linear-gradient(135deg,#0d0016 0%,#10000a 50%,#05080f 100%);
+    }
+    .lv4.light {
+      --c:#120008;
+      --cm:rgba(18,0,8,0.48);
+      --cs:rgba(18,0,8,0.09);
+      --bg:rgba(255,255,255,0.6);
+      --brd:rgba(0,0,0,0.09);
+      --pink:#d6185a;
+      --pink2:#ff4081;
+      --bg-base:linear-gradient(135deg,#fff0f6 0%,#fce8f0 50%,#f0eaff 100%);
+    }
+
+    /* ── fondo del home ── */
+    .lv4-bg {
+      position:fixed;top:0;left:0;width:100vw;height:100vh;
+      z-index:-2;pointer-events:none;
+      transition:background 0.8s ease;
+    }
+    .lv4.dark  .lv4-bg { background: linear-gradient(135deg,#0d0016 0%,#10000a 50%,#05080f 100%); }
+    .lv4.light .lv4-bg { background: linear-gradient(135deg,#fff0f6 0%,#fce8f0 50%,#f0eaff 100%); }
+
+    /* ── orbes ── */
+    .lv4-orb {
+      position:absolute;border-radius:50%;pointer-events:none;
+      filter:blur(60px);
+    }
+    .lv4.dark .lv4-orb-1 {
+      width:65vw;height:65vw;top:-15%;left:-15%;
+      background:radial-gradient(circle,rgba(255,20,90,0.22) 0%,transparent 65%);
+      animation:orb1 14s ease-in-out infinite alternate;
+    }
+    .lv4.dark .lv4-orb-2 {
+      width:70vw;height:70vw;bottom:-10%;right:-15%;
+      background:radial-gradient(circle,rgba(130,20,255,0.18) 0%,transparent 65%);
+      animation:orb2 18s ease-in-out infinite alternate;
+    }
+    .lv4.dark .lv4-orb-3 {
+      width:45vw;height:45vw;top:35%;left:25%;
+      background:radial-gradient(circle,rgba(255,64,129,0.09) 0%,transparent 70%);
+      animation:orb3 22s ease-in-out infinite alternate;
+    }
+    .lv4.light .lv4-orb-1 {
+      width:65vw;height:65vw;top:-15%;left:-15%;
+      background:radial-gradient(circle,rgba(255,80,150,0.28) 0%,transparent 65%);
+      animation:orb1 14s ease-in-out infinite alternate;
+    }
+    .lv4.light .lv4-orb-2 {
+      width:70vw;height:70vw;bottom:-10%;right:-15%;
+      background:radial-gradient(circle,rgba(160,80,255,0.22) 0%,transparent 65%);
+      animation:orb2 18s ease-in-out infinite alternate;
+    }
+    .lv4.light .lv4-orb-3 {
+      width:45vw;height:45vw;top:35%;left:25%;
+      background:radial-gradient(circle,rgba(255,64,129,0.14) 0%,transparent 70%);
+      animation:orb3 22s ease-in-out infinite alternate;
+    }
+    @keyframes orb1 { from{transform:translate(0,0) scale(1)} to{transform:translate(12vw,8vh) scale(1.18)} }
+    @keyframes orb2 { from{transform:translate(0,0) scale(1)} to{transform:translate(-9vw,-10vh) scale(1.12)} }
+    @keyframes orb3 { from{transform:translate(0,0) scale(0.85)} to{transform:translate(6vw,7vh) scale(1.15)} }
+
+    /* ── noise grain ── */
+    .lv4-grain {
+      position:fixed;top:0;left:0;width:100vw;height:100vh;
+      z-index:-1;pointer-events:none;opacity:0.035;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size:180px 180px;
+    }
+
+    /* ── NAV ── */
+    .lv4-nav {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:1.5rem 1.5rem 0;position:relative;z-index:10;
+    }
+    .lv4-logo {
+      font-family:'Space Mono',monospace;
+      font-size:0.62rem;letter-spacing:0.22em;
+      color:var(--pink);text-transform:uppercase;
+    }
+    .lv4-nav-center {
+      font-family:'Space Mono',monospace;
+      font-size:0.58rem;letter-spacing:0.12em;color:var(--cm);
+    }
+    .lv4-toggle {
+      width:40px;height:40px;border-radius:10px;
+      border:1px solid rgba(255,64,129,0.3);
+      background:var(--bg);backdrop-filter:blur(12px);
+      cursor:pointer;color:var(--c);font-size:1rem;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.3s;
+    }
+    .lv4-toggle:hover { border-color:rgba(255,64,129,0.7);background:rgba(255,64,129,0.1); }
+
+    /* ── HERO ── */
+    .lv4-hero { padding:3rem 1.5rem 1.5rem; }
+    .lv4-tag {
+      display:inline-flex;align-items:center;gap:7px;
+      font-family:'Space Mono',monospace;
+      font-size:0.58rem;letter-spacing:0.2em;
+      color:var(--pink);border:1px solid rgba(255,64,129,0.38);
+      border-radius:4px;padding:0.28rem 0.75rem;margin-bottom:1.6rem;
+    }
+    .lv4-tag-dot {
+      width:5px;height:5px;border-radius:50%;background:var(--pink);
+      animation:blink 1.3s step-start infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    .lv4-name {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(5rem,23vw,13rem);
+      line-height:0.87;letter-spacing:0.03em;
+      color:var(--c);display:block;
+    }
+    .lv4.dark .lv4-name {
+      text-shadow:0 0 80px rgba(255,30,100,0.3),0 0 160px rgba(255,30,100,0.12);
+    }
+    .lv4-name-outline {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(5rem,23vw,13rem);
+      line-height:0.87;letter-spacing:0.03em;
+      -webkit-text-stroke:1.5px var(--pink2);
+      color:transparent;display:block;margin-top:-0.04em;
+    }
+    .lv4-subtitle {
+      font-family:'Space Grotesk',sans-serif;
+      font-size:clamp(0.82rem,2.4vw,0.98rem);
+      font-weight:300;color:var(--cm);
+      margin-top:1.1rem;max-width:275px;line-height:1.65;
+    }
+
+    /* ── TICKER ── (CSS puro, sin motion wrapper que interfiera) */
+    .lv4-ticker-outer {
+      overflow:hidden;
+      border-top:1px solid var(--brd);
+      border-bottom:1px solid var(--brd);
+      padding:0.7rem 0;margin:2rem 0;
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,#000 7%,#000 93%,transparent 100%);
+      mask-image:linear-gradient(90deg,transparent 0%,#000 7%,#000 93%,transparent 100%);
+    }
+    .lv4-ticker-track {
+      display:flex;width:max-content;
+      animation:ticker-loop 26s linear infinite;
+      will-change:transform;
+    }
+    .lv4-ticker-outer:hover .lv4-ticker-track { animation-play-state:paused; }
+    @keyframes ticker-loop {
+      0%   { transform:translateX(0); }
+      100% { transform:translateX(-50%); }
+    }
+    .lv4-ticker-half {
+      display:flex;align-items:center;
+      gap:2.5rem;padding-right:2.5rem;flex-shrink:0;
+    }
+    .lv4-ticker-item {
+      font-family:'Space Mono',monospace;
+      font-size:0.58rem;letter-spacing:0.18em;
+      color:var(--cm);text-transform:uppercase;
+      display:flex;align-items:center;gap:0.65rem;white-space:nowrap;
+      flex-shrink:0;
+    }
+    .lv4-ticker-item .tk-accent { color:var(--pink); }
+    .lv4-ticker-item .tk-bold {
+      font-weight:700;color:var(--c);
+    }
+
+    /* ── CONTADOR ── */
+    .lv4-counter {
+      margin:0 1.5rem 2.5rem;
+      display:grid;grid-template-columns:repeat(2,1fr);gap:0.7rem;
+    }
+    .lv4-cnt-big {
+      grid-column:span 2;
+      background:var(--bg);border:1px solid var(--brd);
+      border-radius:18px;backdrop-filter:blur(18px);
+      padding:1.5rem 1.8rem;
+      display:flex;align-items:center;gap:1.2rem;
+      position:relative;overflow:hidden;
+    }
+    .lv4-cnt-big::before {
+      content:'';position:absolute;inset:0;border-radius:18px;
+      background:linear-gradient(120deg,rgba(255,64,129,0.07) 0%,transparent 55%);
+      pointer-events:none;
+    }
+    .lv4-cnt-big-num {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(3.8rem,15vw,6.5rem);line-height:1;color:var(--c);
+    }
+    .lv4.dark .lv4-cnt-big-num { text-shadow:0 0 35px rgba(255,64,129,0.35); }
+    .lv4-cnt-big-lbl {
+      font-family:'Space Mono',monospace;font-size:0.58rem;
+      letter-spacing:0.22em;color:var(--pink);text-transform:uppercase;display:block;
+    }
+    .lv4-cnt-big-sub { font-size:0.76rem;font-weight:300;color:var(--cm);margin-top:0.3rem; }
+
+    .lv4-cnt-sm {
+      background:var(--bg);border:1px solid var(--brd);
+      border-radius:14px;backdrop-filter:blur(16px);
+      padding:1.1rem 1.3rem;position:relative;overflow:hidden;
+    }
+    .lv4-cnt-sm-lbl {
+      font-family:'Space Mono',monospace;font-size:0.52rem;
+      letter-spacing:0.2em;color:var(--pink);text-transform:uppercase;display:block;margin-bottom:0.2rem;
+    }
+    .lv4-cnt-sm-num {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(2.2rem,9vw,3.5rem);line-height:1;color:var(--c);
+    }
+    .lv4.dark .lv4-cnt-sm-num { text-shadow:0 0 22px rgba(255,64,129,0.22); }
+
+    /* ── SECCIÓN CAPÍTULOS ── */
+    .lv4-sec-hd {
+      padding:0 1.5rem;margin-bottom:1rem;
+      display:flex;align-items:center;gap:0.9rem;
+    }
+    .lv4-sec-line { flex:1;height:1px;background:var(--brd); }
+    .lv4-sec-txt {
+      font-family:'Space Mono',monospace;font-size:0.55rem;
+      letter-spacing:0.28em;color:var(--cm);text-transform:uppercase;white-space:nowrap;
+    }
+    .lv4-grid {
+      padding:0 1.5rem;
+      display:grid;grid-template-columns:repeat(2,1fr);gap:0.7rem;
+    }
+    .lv4-card {
+      border-radius:14px;border:1px solid var(--brd);
+      background:var(--bg);backdrop-filter:blur(12px);
+      padding:1.2rem 1.2rem 1rem;
+      cursor:pointer;position:relative;overflow:hidden;
+      transition:border-color 0.3s,transform 0.2s;
+      display:flex;flex-direction:column;justify-content:space-between;
+      min-height:118px;
+    }
+    .lv4-card:hover { border-color:rgba(255,64,129,0.5);transform:translateY(-3px); }
+    .lv4-card-glow {
+      position:absolute;top:-25px;right:-25px;
+      width:90px;height:90px;border-radius:50%;
+      opacity:0.14;pointer-events:none;
+      transition:opacity 0.3s;filter:blur(20px);
+    }
+    .lv4-card:hover .lv4-card-glow { opacity:0.28; }
+    .lv4-card-num {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:2.6rem;line-height:1;color:var(--cs);display:block;
+    }
+    .lv4-card-title { font-size:0.85rem;font-weight:600;color:var(--c);display:block; }
+    .lv4-card-desc  { font-size:0.72rem;font-weight:300;color:var(--cm);margin-top:0.12rem;display:block; }
+    .lv4-card-arrow {
+      position:absolute;bottom:0.9rem;right:1rem;
+      font-size:0.72rem;color:rgba(255,64,129,0.55);
+      font-family:'Space Mono',monospace;
+      transition:color 0.3s,transform 0.3s;
+    }
+    .lv4-card:hover .lv4-card-arrow { color:var(--pink);transform:translate(3px,-3px); }
+
+    /* ── CUMPLEAÑOS ── */
+    .lv4-bday { margin:2rem 1.5rem 0; }
+    .lv4-bday-btn {
+      width:100%;border-radius:18px;
+      border:1px solid rgba(255,64,129,0.38);
+      background:var(--bg);backdrop-filter:blur(18px);
+      padding:1.75rem 1.75rem;cursor:pointer;
+      display:flex;align-items:center;gap:1.4rem;
+      position:relative;overflow:hidden;
+      transition:all 0.35s;text-align:left;
+    }
+    .lv4-bday-btn:hover { border-color:rgba(255,64,129,0.7);background:rgba(255,64,129,0.06); }
+    .lv4-bday-scan {
+      position:absolute;top:0;left:-100%;width:50%;height:100%;
+      background:linear-gradient(90deg,transparent,rgba(255,64,129,0.08),transparent);
+      animation:scan 2.6s linear infinite;
+    }
+    @keyframes scan { to { left:150%; } }
+    .lv4-bday-cake { font-size:2.1rem;flex-shrink:0; }
+    .lv4-bday-lbl {
+      font-family:'Space Mono',monospace;font-size:0.55rem;
+      letter-spacing:0.22em;color:var(--pink);text-transform:uppercase;
+      display:block;margin-bottom:0.28rem;
+    }
+    .lv4-bday-title {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:1.55rem;letter-spacing:0.04em;color:var(--c);
+      display:block;line-height:1.1;
+    }
+    .lv4-bday-hint { font-size:0.74rem;font-weight:300;color:var(--cm);margin-top:0.28rem; }
+    .lv4-bday-arrow {
+      margin-left:auto;font-size:1.3rem;color:rgba(255,64,129,0.5);flex-shrink:0;
+      transition:transform 0.3s,color 0.3s;
+    }
+    .lv4-bday-btn:hover .lv4-bday-arrow { transform:translateX(5px);color:var(--pink); }
+  `;
+  document.head.appendChild(s);
+};
+
+// ─── DATOS ────────────────────────────────────────────────────────────────────
+const CHAPTERS = [
+  { path: "/mes1", num: "01", title: "Mes Uno", desc: "Donde todo comenzó", glow: "#6a11cb" },
+  { path: "/mes2", num: "02", title: "Mes Dos", desc: "Nuestra conexión real", glow: "#f5576c" },
+  { path: "/mes3", num: "03", title: "Mes Tres", desc: "Seguimos creciendo juntos", glow: "#7c4dff" },
+  { path: "/mes4", num: "04", title: "Mes Cuatro", desc: "Un capítulo dorado", glow: "#f4b400" },
+  { path: "/mes5", num: "05", title: "Mes Cinco", desc: "Crecemos juntos", glow: "#43cea2" },
+  { path: "/mes6", num: "06", title: "Mes Seis", desc: "El amor sigue creciendo", glow: "#ff6a88" },
+];
+
+// Items del ticker — suficientes para que la mitad llene la pantalla
+const TICK = [
+  { text: "Te Amo", bold: true },
+  { text: "30 · Nov · 2025", bold: false },
+  { text: "Diana", bold: true },
+  { text: "Para siempre", bold: false },
+  { text: "Nuestro universo", bold: false },
+  { text: "Juntos", bold: true },
+  { text: "♥", bold: false },
+  { text: "Te Amo", bold: true },
+  { text: "30 · Nov · 2025", bold: false },
+  { text: "Diana", bold: true },
+  { text: "Para siempre", bold: false },
+  { text: "Nuestro universo", bold: false },
+  { text: "Juntos", bold: true },
+  { text: "♥", bold: false },
+];
+
+// ─── HOME ──────────────────────────────────────────────────────────────────────
+function Home({ mode, toggleMode }) {
+  const nav = useNavigate();
+  const [time, setTime] = useState({});
+
+  useEffect(() => {
+    injectStyles();
+
+    const tick = () => {
+      const start = dayjs(FECHA_INICIO);
+      const now = dayjs();
+
+      const meses = now.diff(start, "month");
+      const dias = now.diff(start.add(meses, "month"), "day");
+
+      const restante = now.diff(
+        start.add(meses, "month").add(dias, "day")
+      );
+
+      const dur = dayjs.duration(restante);
+
+      setTime({
+        meses,
+        dias,
+        horas: dur.hours(),
+        minutos: dur.minutes(),
+        segundos: dur.seconds(),
+      });
+    };
+
+    tick();
+    const id = setInterval(tick, 1000);
+
+    return () => clearInterval(id);
+  }, []);
+
+  const pad = n => String(n ?? 0).padStart(2, "0");
+  const fade = (delay = 0) => ({ initial: { opacity: 0, y: 18 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] } });
+
+  return (
+    <div className={`lv4 ${mode}`}>
+
+      {/* FONDO DEL HOME */}
+      <div className="lv4-bg">
+        <div className="lv4-orb lv4-orb-1" />
+        <div className="lv4-orb lv4-orb-2" />
+        <div className="lv4-orb lv4-orb-3" />
+      </div>
+      <div className="lv4-grain" />
+
+      {/* PARTÍCULAS CANVAS */}
+      <ParticleCanvas mode={mode} />
+
+      {/* NAV */}
+      <motion.div className="lv4-nav" {...fade(0)}>
+        <div className="lv4-logo">♥ Nuestro Universo</div>
+        <div className="lv4-nav-center">30.11.2025</div>
+        <button className="lv4-toggle" onClick={toggleMode}>{mode === "dark" ? "☀️" : "🌙"}</button>
+      </motion.div>
+
+      {/* HERO */}
+      <div className="lv4-hero">
+        <motion.div {...fade(0.1)}>
+          <div className="lv4-tag">
+            <span className="lv4-tag-dot" />
+            En vivo · desde noviembre 2025
+          </div>
         </motion.div>
+        <motion.div {...fade(0.2)}>
+          <span className="lv4-name">DIANA</span>
+          <span className="lv4-name-outline">TE AMO</span>
+        </motion.div>
+        <motion.p className="lv4-subtitle" {...fade(0.45)}>
+          Cada día contigo es la página más bonita de esta historia.
+        </motion.p>
+      </div>
 
-        <Paper
-          elevation={0}
-          sx={{
-            p: { xs: 3, md: 5 },
-            mb: 6,
-            borderRadius: 8,
-            transition: "all 0.8s ease",
-            background: mode === "dark" ? "rgba(255, 255, 255, 0.02)" : "rgba(255, 255, 255, 0.6)",
-            backdropFilter: "blur(20px)",
-            border: mode === "dark" ? "1px solid rgba(255, 255, 255, 0.08)" : "1px solid rgba(255, 64, 129, 0.2)",
-            boxShadow: mode === "dark" ? "0 20px 40px rgba(0,0,0,0.4)" : "0 20px 40px rgba(255, 105, 180, 0.1)"
-          }}
-        >
-          <Stack direction="row" spacing={1} justifyContent="center" alignItems="center" sx={{ mb: 4, opacity: 0.7 }}>
-            <AccessTime fontSize="small" sx={{ color: "#ff80ab" }} />
-            <Typography
-              variant="overline"
-              sx={{ color: mode === "dark" ? "#fff" : "#000", mt: 0.5, fontWeight: 700 }}
-            >
-              Cronología de nuestra felicidad
-            </Typography>
-          </Stack>
+      {/* ── TICKER — CSS puro, sin motion en el wrapper ── */}
+      <div className="lv4-ticker-outer">
+        <div className="lv4-ticker-track">
+          {/* mitad A */}
+          <div className="lv4-ticker-half">
+            {TICK.map((t, i) => (
+              <div key={"a" + i} className="lv4-ticker-item">
+                <span className="tk-accent">✦</span>
+                <span className={t.bold ? "tk-bold" : ""}>{t.text}</span>
+              </div>
+            ))}
+          </div>
+          {/* mitad B — idéntica, para loop sin salto */}
+          <div className="lv4-ticker-half">
+            {TICK.map((t, i) => (
+              <div key={"b" + i} className="lv4-ticker-item">
+                <span className="tk-accent">✦</span>
+                <span className={t.bold ? "tk-bold" : ""}>{t.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          <Stack
-            direction="row"
-            divider={
-              <Divider
-                orientation="vertical"
-                flexItem
-                sx={{
-                  transition: "border 0.8s ease",
-                  borderColor: mode === "dark" ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
-                }}
-              />
-            }
-            spacing={{ xs: 1, md: 3 }}
-          >
-            <CounterItem value={timeLeft.meses || 0} label="Meses" mode={mode} />
-            <CounterItem value={timeLeft.dias || 0} label="Días" mode={mode} />
-            <CounterItem value={timeLeft.horas || 0} label="Horas" mode={mode} />
-            <CounterItem value={timeLeft.minutos || 0} label="Mins" mode={mode} />
-            <CounterItem value={timeLeft.segundos || 0} label="Segs" mode={mode} />
-          </Stack>
-        </Paper>
+      {/* CONTADOR */}
+      <motion.div className="lv4-counter" {...fade(0.55)}>
+        <div className="lv4-cnt-big">
+          <AnimatePresence mode="wait">
+            <motion.span key={time.meses} className="lv4-cnt-big-num"
+              initial={{ y: -12, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 12, opacity: 0 }} transition={{ duration: 0.28 }}>
+              {pad(time.meses)}
+            </motion.span>
+          </AnimatePresence>
+          <div>
+            <span className="lv4-cnt-big-lbl">Meses juntos</span>
+            <div className="lv4-cnt-big-sub">y siguen sumando ♥</div>
+          </div>
+        </div>
+        {[
+          { val: time.dias, lbl: "Días" },
+          { val: time.horas, lbl: "Horas" },
+          { val: time.minutos, lbl: "Minutos" },
+          { val: time.segundos, lbl: "Segundos" },
+        ].map(({ val, lbl }) => (
+          <div key={lbl} className="lv4-cnt-sm">
+            <span className="lv4-cnt-sm-lbl">{lbl}</span>
+            <AnimatePresence mode="wait">
+              <motion.span key={val} className="lv4-cnt-sm-num"
+                initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.22 }}>
+                {pad(val)}
+              </motion.span>
+            </AnimatePresence>
+          </div>
+        ))}
+      </motion.div>
 
-        <Grid container spacing={2}>
-          {[
-            {
-              path: "/mes1",
-              label: "Mes Uno",
-              desc: "Donde todo comenzó",
-              icon: <AutoAwesome />,
-              color: "linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)"
-            },
-            {
-              path: "/mes2",
-              label: "Mes Dos",
-              desc: "Nuestra conexión real",
-              icon: <Stars />,
-              color: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-            },
-            {
-              path: "/mes3",
-              label: "Mes Tres",
-              desc: "Seguimos creciendo juntos",
-              icon: <Favorite />,
-              color: "linear-gradient(135deg, #7c4dff 0%, #00e5ff 100%)"
-            },
-            {
-              path: "/mes4",
-              label: "Mes Cuatro",
-              desc: "Un capítulo dorado",
-              icon: <AutoAwesome />,
-              color: "linear-gradient(135deg, #f4b400 0%, #ffd54f 100%)"
-            },
-            {
-              path: "/mes5",
-              label: "Mes Cinco",
-              desc: "Crecemos juntos ",
-              icon: <Stars />,
-              color: "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)"
-            },
-          ].map((item, idx) => (
-            <Grid item xs={12} key={idx}>
-              <Paper
-                component={motion.div}
-                whileHover={{ x: 10, scale: 1.01 }}
-                onClick={() => nav(item.path)}
-                sx={{
-                  p: 3,
-                  cursor: "pointer",
-                  borderRadius: 6,
-                  transition: "background 0.8s ease",
-                  background: mode === "dark" ? "rgba(255, 255, 255, 0.04)" : "#fff",
-                  border: "1px solid rgba(255, 255, 255, 0.1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  boxShadow: mode === "light" ? "0 10px 20px rgba(0,0,0,0.05)" : "none"
-                }}
-              >
-                <Stack direction="row" spacing={3} alignItems="center">
-                  <Box
-                    sx={{
-                      p: 1.5,
-                      borderRadius: 4,
-                      background: item.color,
-                      display: "flex",
-                      color: "#fff"
-                    }}
-                  >
-                    {item.icon}
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h6"
-                      sx={{ fontWeight: 800, color: mode === "dark" ? "#fff" : "#000" }}
-                    >
-                      {item.label}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{ color: mode === "dark" ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.5)" }}
-                    >
-                      {item.desc}
-                    </Typography>
-                  </Box>
-                </Stack>
-                <ChevronRightRounded sx={{ color: "#ff4081" }} />
-              </Paper>
-            </Grid>
+      {/* CAPÍTULOS */}
+      <motion.div {...fade(0.7)}>
+        <div className="lv4-sec-hd">
+          <div className="lv4-sec-line" />
+          <span className="lv4-sec-txt">Nuestros capítulos</span>
+          <div className="lv4-sec-line" />
+        </div>
+        <div className="lv4-grid">
+          {CHAPTERS.map((ch, i) => (
+            <motion.div key={ch.path} className="lv4-card"
+              onClick={() => nav(ch.path)}
+              initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.75 + i * 0.06, duration: 0.4 }}
+              whileTap={{ scale: 0.97 }}>
+              <div className="lv4-card-glow" style={{ background: ch.glow }} />
+              <span className="lv4-card-num">{ch.num}</span>
+              <div>
+                <span className="lv4-card-title">{ch.title}</span>
+                <span className="lv4-card-desc">{ch.desc}</span>
+              </div>
+              <span className="lv4-card-arrow">↗</span>
+            </motion.div>
           ))}
-        </Grid>
+        </div>
+      </motion.div>
 
-        <Box sx={{ mt: 8, position: "relative", px: 1 }}>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1, duration: 0.8 }}>
-            <Button
-              onClick={() => nav("/cumple")}
-              fullWidth
-              sx={{
-                height: "100px",
-                borderRadius: "24px",
-                position: "relative",
-                background: mode === "dark" ? "rgba(255, 64, 129, 0.03)" : "rgba(255, 255, 255, 0.4)",
-                backdropFilter: "blur(20px)",
-                border: "1px solid rgba(255, 64, 129, 0.3)",
-                color: "#ff4081",
-                textTransform: "none",
-                overflow: "hidden",
-                display: "flex",
-                justifyContent: "center",
-                px: 4,
-                cursor: "pointer",
-                "&::after": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  borderRadius: "24px",
-                  padding: "2px",
-                  background: "linear-gradient(90deg, transparent, #ff4081, transparent)",
-                  WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMaskComposite: "destination-out",
-                  maskComposite: "exclude",
-                  animation: "shimmer 3s infinite linear",
-                  "@keyframes shimmer": {
-                    "0%": { transform: "translateX(-100%)" },
-                    "100%": { transform: "translateX(100%)" }
-                  }
-                }
-              }}
-            >
-              <Stack direction="row" spacing={3} alignItems="center" sx={{ position: "relative", zIndex: 1 }}>
-                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: Infinity, duration: 2 }}>
-                  <Box
-                    sx={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      bgcolor: "rgba(255, 64, 129, 0.1)",
-                      border: "1px solid rgba(255, 64, 129, 0.2)"
-                    }}
-                  >
-                    <CakeRounded sx={{ fontSize: 28, filter: "drop-shadow(0 0 8px #ff4081)" }} />
-                  </Box>
-                </motion.div>
+      {/* CUMPLEAÑOS */}
+      <motion.div className="lv4-bday" {...fade(1.1)}>
+        <motion.div className="lv4-bday-btn" onClick={() => nav("/cumple")}
+          whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+          <div className="lv4-bday-scan" />
+          <motion.span className="lv4-bday-cake"
+            animate={{ rotate: [0, -8, 8, -5, 0] }} transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}>
+            🎂
+          </motion.span>
+          <div>
+            <span className="lv4-bday-lbl">✦ Surprise unlocked</span>
+            <span className="lv4-bday-title">Feliz Cumpleaños</span>
+            <p className="lv4-bday-hint">Toca para abrir tu sorpresa especial ♥</p>
+          </div>
+          <span className="lv4-bday-arrow">→</span>
+        </motion.div>
+      </motion.div>
 
-                <Box sx={{ textAlign: "center" }}>
-                  <Typography
-                    sx={{
-                      fontWeight: 900,
-                      fontSize: "1.2rem",
-                      letterSpacing: 1,
-                      background: "linear-gradient(90deg, #ff4081, #ff80ab)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent"
-                    }}
-                  >
-                    FELIZ CUMPLEAÑOS, MI AMOR
-                  </Typography>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      color: mode === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.5)",
-                      fontWeight: 700
-                    }}
-                  >
-                    Click aquí para abrir tu sorpresa
-                  </Typography>
-                </Box>
-              </Stack>
-            </Button>
-          </motion.div>
-        </Box>
-      </Box>
-    </Container>
+    </div>
   );
 }
 
+// ─── ROOT ──────────────────────────────────────────────────────────────────────
 export default function App() {
   const [mode, setMode] = useState(() => localStorage.getItem("userTheme") || "dark");
+  useEffect(() => { localStorage.setItem("userTheme", mode); }, [mode]);
+  const toggleMode = () => setMode(m => m === "dark" ? "light" : "dark");
 
-  useEffect(() => {
-    localStorage.setItem("userTheme", mode);
-  }, [mode]);
-
-  const toggleMode = () => setMode((m) => (m === "dark" ? "light" : "dark"));
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        palette: { mode, primary: { main: "#ff69b4" } },
-        typography: { fontFamily: "ui-sans-serif, system-ui, Roboto" },
-      }),
-    [mode]
-  );
+  const theme = useMemo(() => createTheme({
+    palette: { mode, primary: { main: "#ff69b4" } },
+    typography: { fontFamily: "Space Grotesk, sans-serif" },
+  }), [mode]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -495,6 +725,7 @@ export default function App() {
           <Route path="/mes3" element={<Mes3 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes4" element={<Mes4 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes5" element={<Mes5 mode={mode} toggleMode={toggleMode} />} />
+          <Route path="/mes6" element={<Mes6 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/san-valentin" element={<SanValentin mode={mode} />} />
           <Route path="/cumple" element={<Cumple mode={mode} toggleMode={toggleMode} />} />
         </Routes>

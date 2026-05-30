@@ -20,7 +20,7 @@ import {
   IconButton,
   Tooltip,
 } from "@mui/material";
-
+import { useNavigate } from "react-router-dom";
 import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import KeyboardArrowLeftRoundedIcon from "@mui/icons-material/KeyboardArrowLeftRounded";
@@ -34,6 +34,7 @@ import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 import AllInclusiveRoundedIcon from "@mui/icons-material/AllInclusiveRounded";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded"; // 🏠 Icono de inicio
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -491,26 +492,26 @@ function SelectBox({ value, onChange, mode, children, ariaLabel }) {
 function useDailyReason() {
   const reasons = useMemo(
     () => [
-      "Porque me haces sentir feliz con solo hablarte 💖",
-      "Porque tu sonrisa ilumina cada parte de mí 💗",
-      "Porque estar contigo es lo mejor del mundo 👀💗",
-      "Porque contigo todo se siente más bonito ✨",
-      "Porque siempre me motivas a ser lo mejor 🫶",
-      "Porque me encanta tu forma de ser, completa 💘",
-      "Porque tus llamadas son lo mejor que me puede pasar en el día 💞",
-      "Porque me comprendes como nadie 😄",
-      "Porque me gusta que te preocupes por mí 💖",
-      "Porque eres lo mejor que tengo 💗",
-      "Porque contigo no hace falta fingir algo que no soy 🫶",
-      "Porque cada día contigo es un sueño cumplido 💖",
-      "Porque me encanta tu forma de pensar 💗",
-      "Porque eres todo lo que siempre necesité 💗",
-      "Porque cuando estás conmigo, todo se siente distinto 💞",
-      "Porque me gusta imaginar un futuro contigo 💗",
-      "Porque me encanta tu sensibilidad 💗",
-      "Porque eres hermosa por dentro y por fuera 💘",
-      "Porque me haces sentir cosas que jamás imaginé 💖",
-      "Porque eres mi elección hoy y siempre 💗",
+      "Porque eres mi luz y mi guia todos los dias 💖",
+      "Porque me ayudas a ser mejor persona todos los dias 💗",
+      "Porque estas en cada parte de mi y en lo mas profundo de mi corazón 👀💗",
+      "Porque cada vez que te veo, mi corazón late más fuerte ✨",
+      "Porque me encanta que aunque sea difícil, siempre estás ahí para mí 💖",
+      "Porque me tu le das color a mi vida, sin ti seria gris 💘",
+      "Porque eres mi paz y mi tranquilidad 💞",
+      "Porque eres la razon por la que mejoro cada dia mas 😄",
+      "Porque me eliges todos los dias anque sea dificil💖",
+      "Porque crees en mi 💗",
+      "Porque eres la mejor decisión  que tome en la vida entera 🫶",
+      "Porque no hay nadie más en este mundo con quien quiera estar 💖",
+      "Porque me haces sentir que soy suficiente 💗",
+      "Porque eres mi vida entera 💗",
+      "Porque te convertiste en parte de mi 💞",
+      "Porque vamos a lograr cosas hermosas juntos 💗",
+      "Porque eres complice en todas mis locuras 💗",
+      "Porque te volviste todo para mi 💘",
+      "Porque contigo no me alcanza el tiempo 💖",
+      "Porque a pesar de pelear, siempre nos entendemos 💗",
     ],
     []
   );
@@ -894,6 +895,7 @@ function TimelineMini({ mode }) {
 function LovePage({ mode, onBack }) {
   const [open, setOpen] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
+    const navigate = useNavigate()
 
   const [elapsed, setElapsed] = useState(() => getElapsedTime());
 
@@ -982,10 +984,30 @@ function LovePage({ mode, onBack }) {
         }}
       >
         <Container maxWidth="md">
-          {/* BOTÓN REGRESAR */}
-          <Button variant="text" onClick={onBack} sx={{ mb: 2, fontWeight: 700 }}>
-            ⬅ Regresar
-          </Button>
+          {/* BOTÓN DE INICIO CORREGIDO */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<HomeRoundedIcon />}
+              onClick={() => navigate("/")}  // 👈 CAMBIADO: Ahora usa navigate
+              sx={{
+                fontWeight: 700,
+                borderRadius: 999,
+                px: 2.5,
+                py: 0.8,
+                borderColor: "rgba(255,105,180,0.5)",
+                color: mode === "dark" ? "#ff9ec4" : "#d81b60",
+                "&:hover": {
+                  borderColor: "#ff69b4",
+                  backgroundColor: "rgba(255,105,180,0.1)",
+                },
+              }}
+            >
+              Inicio
+            </Button>
+
+            {/* Espacio para el botón de modo si quieres, pero ya existe el Toggle fijo */}
+          </Box>
 
           {/* HERO */}
           <Box
