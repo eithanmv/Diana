@@ -16,6 +16,7 @@ import Mes5 from "../mes5/mes5";
 import Mes6 from "../mes6/mes6";
 import Mes7 from "../mes7/mes7";
 import Mes8 from "../mes8/mes8";
+import Mes9 from "../mes9/mes9";
 import SanValentin from "../sanvalentin/sanvalentin";
 import Cumple from "../cumple/Cumple";
 
@@ -60,6 +61,7 @@ const GlobalBackground = ({ mode }) => {
   "/mes6": "default",
   "/mes7": "default",
   "/mes8": "default",
+   "/mes9": "default",
   "/cumple": "cumple",
   "/san-valentin": "default",
 };
@@ -514,6 +516,7 @@ const CHAPTERS = [
   { path: "/mes6", num: "06", title: "Mes Seis", desc: "El amor sigue creciendo", glow: "#ff6a88" },
   { path: "/mes7", num: "07", title: "Mes Siete", desc: "Siete meses de nosotros", glow: "#ff6b35" },
   { path: "/mes8", num: "08", title: "Mes Ocho", desc: "Ocho meses de nosotros", glow: "#9c27b0" },
+  { path: "/mes9", num: "09", title: "Mes Nueve", desc: "Nueve meses de nosotros", glow: "#e91e63" },
 ];
 
 // Items del ticker — suficientes para que la mitad llene la pantalla
@@ -741,6 +744,7 @@ export default function App() {
           <Route path="/mes6" element={<Mes6 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes7" element={<Mes7 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/mes8" element={<Mes8 mode={mode} toggleMode={toggleMode} />} />
+          <Route path="/mes9" element={<Mes9 mode={mode} toggleMode={toggleMode} />} />
           <Route path="/san-valentin" element={<SanValentin mode={mode} />} />
           <Route path="/cumple" element={<Cumple mode={mode} toggleMode={toggleMode} />} />
         </Routes>
